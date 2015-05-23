@@ -1,1 +1,43 @@
-This is a Twitter app...
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Twitter app</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  </head>
+  <body>
+
+    <form action="/api/tweets" method="get">
+      <input type="text" class="tweet-search" placeholder="e.g. Lebron James">
+      <input type="submit" name="submit" value="Let's do this" class="submit-tweet">
+    </form>
+
+
+
+    <section class="tweet-home">
+    </section>
+
+    <script>
+      $('document').ready(function(){
+        console.log('ready!');
+
+        $('.submit.tweet').on('click', function(evt){
+          evt.preventDefault();
+
+          var params = $('.tweet-search').val();
+          console.log(params);
+          $.ajax({
+            dataType: 'json',
+            url: '/api/tweets',
+            data: {query: params},
+            success: function(results) {
+              console.log(results);
+            }
+          })
+
+        })
+      });
+
+    </script>
+
+  </body>
+</html>
