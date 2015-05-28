@@ -1,10 +1,13 @@
 require 'bundler'
 Bundler.require()
 
+require 'dotenv'
+Dotenv.load
+
 # Connection
 
 # dependencies/requirements
-require './.env'
+
 
 # helpers
 
