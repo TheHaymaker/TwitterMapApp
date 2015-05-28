@@ -17,3 +17,6 @@
 /tmp
 
 /apikey.rb
+
+# ignore the secretz
+.env 

@@ -4,6 +4,7 @@ Bundler.require()
 # Connection
 
 # dependencies/requirements
+require './apikey'
 
 # helpers
 
@@ -16,14 +17,17 @@ end
 
 get '/api/tweets' do
 
-  Geokit::Geocoders::GoogleGeocoder.api_key = 'AIzaSyD0FKozWfNbLIDLadt4aPtgb0500t4ZsEI'
+  client = Auth.initialize_api()
+  Auth.geo_fy()
 
-  client = Twitter::REST::Client.new do |config|
-    config.consumer_key        = "AtH5GR3xOBNY98U9DiuRHjkxn"
-    config.consumer_secret     = "BtX6er4934VYSQnbZSBt2vOWvCcgmupfHmh9bLMUp3Bf33b9ZD"
-    config.access_token        = "2398529317-DJz4XZMyjWgAA2hQjMjAC9PiOPPg1bZoABYQNSg"
-    config.access_token_secret = "WpP6FBakk28rnJI1zSy4hmQD23xmCr0gPNG6ObN1kS1pS"
-  end
+  # Geokit::Geocoders::GoogleGeocoder.api_key = 'AIzaSyAxou12WrQtSprFe0QdKGx-dWI_62IvKRA'
+  #
+  # client = Twitter::REST::Client.new do |config|
+  #   config.consumer_key        = "ROKwYziL12PquOouIBjJIeaxd"
+  #   config.consumer_secret     = "IVOnO21rbhmlIsgdmOpEE0y4ctm5epD5Y7DmJMUn8z06nCB0U6"
+  #   config.access_token        = "2398529317-DJz4XZMyjWgAA2hQjMjAC9PiOPPg1bZoABYQNSg"
+  #   config.access_token_secret = "WpP6FBakk28rnJI1zSy4hmQD23xmCr0gPNG6ObN1kS1pS"
+  # end
 
   content_type :json
   tweets = []
