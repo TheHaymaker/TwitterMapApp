@@ -34,19 +34,33 @@ get '/api/tweets' do
 
   content_type :json
   tweets = []
-  # binding.pry
   client.search("#{params[ :query ]}", result_type: "mixed").take(3).each do |tweet|
-
-
-
     puts "----------------------------"
     unless tweet.user.location.nil? || tweet.user.location.strip.empty?
       puts "#{tweet.user.name} AKA #{tweet.user.screen_name} is from #{tweet.user.location}"
       geo = Geokit::Geocoders::GoogleGeocoder.geocode(tweet.user.location)
-      tweets.push({message: tweet.full_text, retweet: tweet.retweet_count, place: tweet.user.location, lat: geo.lat, long: geo.lng})
+      tweets.push({
+        message: tweet.full_text,
+        # hashtags:
+        retweet: tweet.retweet_count,
+        followers: tweet.user.followers_count,
+        handle: tweet.user.screen_name,
+        img_url: tweet.user.profile_background_image_url.to_s,
+        place: geo.full_address,
+        lat: geo.lat,
+        long: geo.lng
+        })
+
       puts geo.success ? "#{geo.lat}, #{geo.lng}, #{geo.full_address}" : "Unable to find Geo for #{tweet.user.location}"
     else
-      tweets.push({message: tweet.text, retweet: tweet.retweet_count, place: "No listed location."})
+      tweets.push({
+        message: tweet.full_text,
+        retweet: tweet.retweet_count,
+        followers: tweet.user.followers_count,
+        handle: tweet.user.screen_name,
+        img_url: tweet.user.profile_background_image_url.to_s,
+        place: "Location not available."
+        })
       puts "#{tweet.user.name} AKA #{tweet.user.screen_name} idk where they are from..."
       puts "No listed location"
     end
