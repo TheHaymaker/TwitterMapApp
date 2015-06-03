@@ -2,68 +2,40 @@
 <html>
   <head>
     <title>Twitter app</title>
+    <link rel="stylesheet" type="stylesheet/css" href="/stylesheets/styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
     <script src="http://d3js.org/topojson.v1.min.js"></script>
 
   </head>
   <body>
+    <header class="header">
+      <form id='query-form'>
+        <input type="text" name="query" class="tweet-search" placeholder="e.g. Lebron James">
+        <input type="submit" name="submit" value="Let's do this" class="submit-tweet">
+      </form>
+     </header> 
 
-    <form id='query-form'>
-      <input type="text" name="query" class="tweet-search" placeholder="e.g. Lebron James">
-      <input type="submit" name="submit" value="Let's do this" class="submit-tweet">
-    </form>
-
-
-    <section class="tweet-home">
+    <section class="display-tweets">
+      <section class="tweet-home"></section>
     </section>
 
     <div class="map-container"></div>
 
-    
+
     <script src="javascripts/scripts.js"></script>
     <script>
-      $('document').ready(function(){
-        console.log('ready!');
+      // $('document').ready(function(){
+      //   console.log('ready!');
 
-        var app = app || {};
+      //   $('#query-form').on('submit', function(evt){
+      //     evt.preventDefault();
+      //     var app = app || {};
 
-        app.data;
-
-        $('#query-form').on('submit', function(evt){
-          evt.preventDefault();
-
-          var params = $('.tweet-search').val();
-          console.log(params);
-
-          $.ajax({
-            dataType: 'json',
-            url: '/api/tweets',
-            data: {query: params},
-            success: function(results) {
-              console.log(results);
-              app.data = results;
-              $('.tweet-home').html("");
-
-              for (var i = 0; i < app.data.length; i++) {
-                var regex = /(http:..t.co.\w*)/g;
-                var str = app.data[i].message;
-                var link = str.match(regex);
-                var safeMessage = str.replace(regex, "");
-                if(link) {
-                  var bind = $('.tweet-home').append("<li> '" +
-                   safeMessage + "'<br> Retweets: " + app.data[i].retweet +
-                    "<br><a href=\"" + link[0] + "\" target=\"_blank\">" +
-                     link[0] + "</a></li>");
-                } else {
-                  var bind = $('.tweet-home').append("<li> '" +
-                   app.data[i].message + "'<br> Retweets: " + app.data[i].retweet + "</li>");
-                }
-              }
-            }
-          });
-        });
-      });
+      //     app.retrieveData();
+          
+      //   });
+      // });
 
     </script>
 

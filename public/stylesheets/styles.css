@@ -1,0 +1,41 @@
+body {
+
+	background-color: rgb(68, 97, 164);
+	font-size: 10px;
+}
+
+header {
+	margin: 0 auto;
+	width: 100%;
+	height: 4em;
+	border-radius: 5px;
+	background-color: rgb(76, 69, 54);
+	color: white;
+}
+
+header form input {
+	border-radius: 2px;
+	border: none;
+	border-bottom: 2px solid black;
+	line-height: 2em;
+	position: relative;
+	margin-right: 5px;
+}
+
+header form {
+	padding-top: 5px;
+	padding-left: 20px;
+}
+
+.display-tweets {
+	overflow: auto;
+	width: 20%;
+	float: left;
+	margin: 0;
+}
+
+.map-container {
+	overflow: auto;
+	width: 75%;
+	margin: 0;
+}
