@@ -34,7 +34,7 @@ get '/api/tweets' do
 
   content_type :json
   tweets = []
-  client.search("#{params[ :query ]}", result_type: "mixed").take(3).each do |tweet|
+  client.search("#{params[ :query ]}", result_type: "mixed").take(100).each do |tweet|
     puts "----------------------------"
     unless tweet.user.location.nil? || tweet.user.location.strip.empty?
       puts "#{tweet.user.name} AKA #{tweet.user.screen_name} is from #{tweet.user.location}"
