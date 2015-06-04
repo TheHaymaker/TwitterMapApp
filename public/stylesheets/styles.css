@@ -36,6 +36,7 @@ header form {
 
 .map-container {
 	overflow: auto;
-	width: 75%;
+	width: 78%;
+	height: 100%;
 	margin: 0;
 }

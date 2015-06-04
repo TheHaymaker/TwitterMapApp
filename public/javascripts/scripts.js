@@ -20,9 +20,9 @@ app.MakeMap = function makeMap() {
           .attr("width", app.width)
           .attr("height", app.height);
 
-      d3.json("world-110m.json", function(error, topology) {
+      d3.json("world-110m3.json", function(error, topology) {
         app.svg.selectAll("path")
-          .data(topojson.feature(topology, topology.objects.countries).features)
+          .data(topojson.feature(topology, topology.objects["world-110m2"]).features)
           .enter()
           .append("path")
           .attr("d", app.path)
