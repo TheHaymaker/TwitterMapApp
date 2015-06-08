@@ -9,8 +9,8 @@ app.height = window.innerHeight;
 
 app.MakeMap = function makeMap() {
       app.projection = d3.geo.mercator()
-            .scale(app.width/7)
-            .center([0,0])
+            .scale(app.width/6)
+            .center([-10,30])
             .translate([app.width/2, app.height/2]);
 
       app.path = d3.geo.path()
@@ -20,35 +20,94 @@ app.MakeMap = function makeMap() {
           .attr("width", app.width)
           .attr("height", app.height);
 
+
       d3.json("world-110m3.json", function(error, topology) {
         app.svg.selectAll("path")
           .data(topojson.feature(topology, topology.objects["world-110m2"]).features)
           .enter()
           .append("path")
-          .attr("d", app.path)
-          .style("fill", "rgb(214, 173, 91)")
-          .attr("stroke", "rgb(132, 114, 77)")
-          .attr("stroke-width", 1);
-        }); 
+          .attr("d", app.path);
+        });
     };
 
 app.projectData = function ProjectData(data) {
   console.log(data);
 
+  var tooltip = d3.select("body")
+  .append("div")
+  .attr("class", "tooltip")
+  .style("position", "absolute")
+  .style("z-index", "10")
+  .style("visibility", "hidden");
+
   app.svg.selectAll("circle")
     .data(app.plottableData)
     .enter()
     .append("circle")
-    .attr("r", 3)
+    .attr("r", 5)
     .attr("cx", function(d) {
                    return app.projection([d.long, d.lat])[0];
            })
            .attr("cy", function(d) {
-                   return app.projection([d.lon, d.lat])[1];
+                   return app.projection([d.long, d.lat])[1];
            })
-    .attr("stroke", "rgb(200, 84, 107)")
-    .attr("stroke-width", 1)
-    .attr("fill", 'rgba(200, 84, 107, 0.85)');
+    .attr("stroke", "rgb(255, 255, 255)")
+    .attr("stroke-width", 2)
+    .attr("fill", 'rgba(244, 9, 9, 0.9)')
+    .on("mouseover", mouseOver)
+    .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
+    .on("mouseout", mouseOut)
+    .on("click", click);
+
+    function mouseOver() {
+      d3.select(this)
+      .transition()
+      .duration(200)
+      .attr("stroke-width", 3)
+      .attr("stroke", "rgb(0,0,0)")
+      .attr("fill", "rgb(115, 189, 255)");
+
+       tooltip.html('');
+
+      tooltip.style("visibility", "hidden");
+
+      // var who = d3.select(this)[0][0].__data__.name;
+      // var what = d3.select(this)[0][0].__data__.message;
+      // var retweet = d3.select(this)[0][0].__data__.retweet;
+      // var img_url = d3.select(this)[0][0].__data__.img_url;
+
+      // tooltip.style("visibility", "visible")
+      // .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
+      //  who + "</h3>" + what +
+      //  "<br>Retweeted <strong>" + retweet.toString() + "</strong> times.");
+    }
+
+    function mouseOut(){
+      d3.select(this)
+      .transition()
+      .duration(200)
+      .attr("stroke-width", 2)
+      .attr("stroke", "rgb(255, 255, 255)")
+      .attr("fill", 'rgba(244, 9, 9, 0.9)');
+
+     
+    }
+
+    function click(){
+      var dataset = d3.select(this)[0][0].__data__;
+      console.log(dataset);
+      var who = dataset.name;
+      var what = dataset.message;
+      var retweet = dataset.retweet;
+      var img_url = dataset.img_url;
+
+      tooltip.html('');
+
+      tooltip.style("visibility", "visible")
+      .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
+       who + "</h3>" + what +
+       "<br>Retweeted <strong>" + retweet.toString() + "</strong> times.");
+    }
 
   app.svg.selectAll("circle")
     .data(app.plottableData)
@@ -67,11 +126,12 @@ app.retrieveData = function retrieveData() {
     data: {query: params},
     success: function(results) {
       console.log(results);
+      app.plottableData = [];
 
       for (var i = 0; i < results.length; i++) {
         if(results[i].lat) {
           console.log(results[i]);
-          app.plottableData.push({name: results[i].handle, lat: results[i].lat, long: results[i].long});
+          app.plottableData.push({name: results[i].handle, message: results[i].message, retweet: results[i].retweet, img_url: results[i].img_url, lat: results[i].lat, long: results[i].long});
         }
       };
 

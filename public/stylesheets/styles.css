@@ -1,26 +1,18 @@
 body {
 
-	background-color: rgb(68, 97, 164);
-	font-size: 10px;
+	background-color: rgb(255, 255, 255);
+	font-size: 16px;
 }
 
 header {
 	margin: 0 auto;
 	width: 100%;
-	height: 4em;
-	border-radius: 5px;
-	background-color: rgb(76, 69, 54);
-	color: white;
+	height: 5em;
+	background-color: rgb(108, 114, 118);
+	font-family: 'Codystar', monospace, sans-serif;
+	/*border-bottom: 6px solid black;*/
 }
 
-header form input {
-	border-radius: 2px;
-	border: none;
-	border-bottom: 2px solid black;
-	line-height: 2em;
-	position: relative;
-	margin-right: 5px;
-}
 
 header form {
 	padding-top: 5px;
@@ -29,14 +21,139 @@ header form {
 
 .display-tweets {
 	overflow: auto;
-	width: 20%;
+	width: 100%;
+	height: 8em;
 	float: left;
 	margin: 0;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	/*background-color: rgba(93, 89, 250, 0.8);*/
+	/*background-color: white;*/
+	background-color: rgb(108, 114, 118);
+	/*border-top: 3px solid white;
+	border-bottom: 3px solid white;*/
 }
 
 .map-container {
 	overflow: auto;
-	width: 78%;
-	height: 100%;
-	margin: 0;
+	width: 100%;
+	margin: 2em auto;
+	background-color: rgb(0, 42, 79);
+}
+
+.tooltip {
+	padding: 20px;
+	overflow: auto;
+	width: 250px;
+	height: 300px;
+	position: absolute;
+	z-index: 10;
+	visibility: visible;
+	border: 2px solid black;
+	color: black;
+	font-family: Quicksand, monospace, sans-serif;
+	box-shadow: rgba(0, 0, 0, 0.619608) 20px 20px;
+	box-sizing: border-box;
+	background-color: rgb(245, 245, 245);
+}
+
+.tooltip-photo {
+	width: 200px;
+	height: 150px;
+	background-size: cover;
+}
+
+svg {
+	
+}
+
+path {
+	fill: rgba(249, 255, 0, 0.9);
+	stroke: rgba(48, 129, 132, 0.09);
+	stroke-width: 50px;
+}
+
+.tweet-home a {
+	text-decoration: none;
+	background-color: white;
+
+}
+
+input.tweet-search {
+	border-radius: 0px 20px 0px 0px;
+	border: none;
+	border-bottom: 4px solid black;
+	box-shadow: 30px 10px black;
+	position: relative;
+	margin-right: 10px;
+	padding: 10px;
+	background-color: rgba(244, 244, 244, 0.901961);
+	color: black;
+	font-family: 'Codystar', monospace, sans-serif;
+	letter-spacing: 3px;
+	font-size: x-large;
+}
+
+input.submit-tweet {
+	border-radius: 0px 20px 0px 0px;
+	border: none;
+	border-bottom: 4px solid black;
+	box-shadow: 30px 10px black;
+	position: relative;
+	margin-right: 10px;
+	padding: 10px;
+	background-color: rgba(244, 9, 9, 0.901961);
+	color: white;
+	font-family: 'Codystar', monospace, sans-serif;
+	letter-spacing: 3px;
+	font-size: x-large;
+}
+
+.submit-tweet:hover {
+	background-color: rgb(48, 145, 255);
+}
+
+li {
+	font-family: 'Quicksand', monospace, sans-serif;
+	font-size: larger;
+	border: 2px solid black;
+	border-radius: 10px;
+	margin: 6px 4px 6px 4px;
+	padding: 10px;
+	list-style: none;
+	background-color: whitesmoke;
+}
+
+#logo {
+	height: 4em;
+	width: 3em;
+	margin: 5px;
+	position: relative;
+	display: inline-block;
+}
+
+/* ===============================================  */
+/* ============ Click to Zoom on Map =============  */
+/* ===============================================  */
+
+
+.background {
+  fill: none;
+  pointer-events: all;
+}
+
+.feature {
+  fill: #ccc;
+  cursor: pointer;
+}
+
+.feature.active {
+  fill: orange;
+}
+
+.mesh {
+  fill: none;
+  stroke: #fff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
