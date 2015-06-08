@@ -5,6 +5,14 @@ app.plottableData = [];
 
 app.width = window.innerWidth;
 app.height = window.innerHeight;
+app.active = d3.select(null);
+
+app.tooltip = d3.select("body")
+  .append("div")
+  .attr("class", "tooltip")
+  .style("position", "absolute")
+  .style("z-index", "10")
+  .style("visibility", "hidden");
 
 
 app.MakeMap = function makeMap() {
@@ -20,27 +28,81 @@ app.MakeMap = function makeMap() {
           .attr("width", app.width)
           .attr("height", app.height);
 
+      app.svg.append("rect")
+        .attr("class", "background")
+        .attr("width", app.width)
+        .attr("height", app.height)
+        .on("click", reset);
+
+        app.g = app.svg.append("g")
+          .style("stroke-width", "1.5px");
 
       d3.json("world-110m3.json", function(error, topology) {
-        app.svg.selectAll("path")
+        app.g.selectAll("path")
           .data(topojson.feature(topology, topology.objects["world-110m2"]).features)
           .enter()
           .append("path")
-          .attr("d", app.path);
+          .attr("d", app.path)
+          .attr("class", "feature")
+          .on("click", clicked);
+
+          app.g.append("path")
+            .datum(topojson.mesh(topology, topology.objects["world-110m2"], function(a, b) { return a !== b; }))
+            .attr("class", "mesh")
+            .attr("d", app.path);
         });
+
+        function clicked(d) {
+
+
+          if (app.active.node() === this) return reset();
+          app.active.classed("active", false);
+          app.active = d3.select(this).classed("active", true);
+
+        var bounds = app.path.bounds(d),
+          dx = bounds[1][0] - bounds[0][0],
+          dy = bounds[1][1] - bounds[0][1],
+          x = (bounds[0][0] + bounds[1][0]) / 2,
+          y = (bounds[0][1] + bounds[1][1]) / 2,
+          scale = .9 / Math.max(dx / app.width, dy / app.height),
+          translate = [app.width / 2 - scale * x, app.height / 2 - scale * y];
+
+        app.g.transition()
+          .duration(750)
+          .style("stroke-width", 1.5 / scale + "px")
+          .attr("transform", "translate(" + translate + ")scale(" + scale + ")");
+
+          d3.select('g').selectAll('circle').remove();
+
+          app.projectData(app.plottableData);
+        }
+
+        function reset() {
+          app.active.classed("active", false);
+          app.active = d3.select(null);
+
+          app.g.transition()
+          .duration(750)
+          .style("stroke-width", "1.5px")
+          .attr("transform", "");
+
+          d3.select('g').selectAll('circle').remove();
+
+          app.projectData(app.plottableData);
+        }
     };
 
 app.projectData = function ProjectData(data) {
   console.log(data);
 
-  var tooltip = d3.select("body")
-  .append("div")
-  .attr("class", "tooltip")
-  .style("position", "absolute")
-  .style("z-index", "10")
-  .style("visibility", "hidden");
+  // var tooltip = d3.select("body")
+  // .append("div")
+  // .attr("class", "tooltip")
+  // .style("position", "absolute")
+  // .style("z-index", "10")
+  // .style("visibility", "hidden");
 
-  app.svg.selectAll("circle")
+  app.g.selectAll("circle")
     .data(app.plottableData)
     .enter()
     .append("circle")
@@ -55,7 +117,7 @@ app.projectData = function ProjectData(data) {
     .attr("stroke-width", 2)
     .attr("fill", 'rgba(244, 9, 9, 0.9)')
     .on("mouseover", mouseOver)
-    .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
+    .on("mousemove", function(){return app.tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
     .on("mouseout", mouseOut)
     .on("click", click);
 
@@ -67,9 +129,9 @@ app.projectData = function ProjectData(data) {
       .attr("stroke", "rgb(0,0,0)")
       .attr("fill", "rgb(115, 189, 255)");
 
-       tooltip.html('');
+      app.tooltip.html('');
 
-      tooltip.style("visibility", "hidden");
+      app.tooltip.style("visibility", "hidden");
 
       // var who = d3.select(this)[0][0].__data__.name;
       // var what = d3.select(this)[0][0].__data__.message;
@@ -101,15 +163,15 @@ app.projectData = function ProjectData(data) {
       var retweet = dataset.retweet;
       var img_url = dataset.img_url;
 
-      tooltip.html('');
+      app.tooltip.html('');
 
-      tooltip.style("visibility", "visible")
+      app.tooltip.style("visibility", "visible")
       .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
        who + "</h3>" + what +
        "<br>Retweeted <strong>" + retweet.toString() + "</strong> times.");
     }
 
-  app.svg.selectAll("circle")
+  app.g.selectAll("circle")
     .data(app.plottableData)
     .exit()
     .remove();

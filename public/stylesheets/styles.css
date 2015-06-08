@@ -69,8 +69,8 @@ svg {
 
 path {
 	fill: rgba(249, 255, 0, 0.9);
-	stroke: rgba(48, 129, 132, 0.09);
-	stroke-width: 50px;
+	stroke: rgb(48, 129, 132);
+	stroke-width: 1px;
 }
 
 .tweet-home a {
