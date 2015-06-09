@@ -63,7 +63,7 @@ header form {
 	background-size: cover;
 }
 
-svg {
+/*svg {
 	
 }
 
@@ -71,7 +71,7 @@ path {
 	fill: rgba(249, 255, 0, 0.9);
 	stroke: rgb(48, 129, 132);
 	stroke-width: 1px;
-}
+}*/
 
 .tweet-home a {
 	text-decoration: none;
@@ -136,6 +136,9 @@ li {
 /* ============ Click to Zoom on Map =============  */
 /* ===============================================  */
 
+svg {
+	stroke: rgba(55, 149, 240, 0.29);
+}
 
 .background {
   fill: none;
@@ -143,17 +146,17 @@ li {
 }
 
 .feature {
-  fill: #ccc;
+  fill: rgb(228, 232, 42);
   cursor: pointer;
 }
 
 .feature.active {
-  fill: orange;
+  fill: rgb(48, 145, 255);
 }
 
 .mesh {
   fill: none;
-  stroke: #fff;
+  stroke: rgb(0,0,0);
   stroke-linecap: round;
   stroke-linejoin: round;
 }

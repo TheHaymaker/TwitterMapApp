@@ -1,3 +1,5 @@
+// ============ N A M E S P A C I N G =================//
+
 var app = app || {};
 
 app.data;
@@ -14,7 +16,64 @@ app.tooltip = d3.select("body")
   .style("z-index", "10")
   .style("visibility", "hidden");
 
+// ============ F U N C T I O N S =================//
 
+function clicked(d) {
+  if (app.active.node() === this) return reset();
+  app.active.classed("active", false);
+  app.active = d3.select(this).classed("active", true);
+
+  var bounds = app.path.bounds(d),
+  dx = bounds[1][0] - bounds[0][0],
+  dy = bounds[1][1] - bounds[0][1],
+  x = (bounds[0][0] + bounds[1][0]) / 2,
+  y = (bounds[0][1] + bounds[1][1]) / 2;
+  app.scale = 0.9 / Math.max(dx / app.width, dy / app.height);
+  translate = [app.width / 2 - app.scale * x, app.height / 2 - app.scale * y];
+
+  app.svg.transition()
+  .duration(750)
+  .call(app.zoom.translate(translate).scale(app.scale).event);
+
+  d3.select('svg').selectAll('circle').remove();
+  app.projectData(app.plottableData);
+}
+
+function reset() {
+  app.active.classed("active", false);
+  app.active = d3.select(null);
+
+  app.svg.transition()
+  .duration(750)
+  .call(app.zoom.translate([0,0]).scale(1).event)
+
+  d3.select('svg').selectAll('circle').remove();
+  app.projectData(app.plottableData);
+}
+
+function zoomed() {
+  app.g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+  app.g.select(".feature").style("stroke-width", 1.5 / d3.event.scale + "px");
+  app.g.select(".mesh").style("stroke-width", 1.5 / d3.event.scale + "px");
+  app.g.selectAll("circle").style("stroke-width", 1.5 / d3.event.scale + "px");
+  app.g.selectAll("circle").attr("r", 5 / d3.event.scale + "px");
+  app.svg.style("stroke-width", 1.5 / d3.event.scale + "px");
+}
+
+// If the drag behavior prevents the default click,
+// also stop propagation so we don’t click-to-zoom.
+function stopped() {
+  if (d3.event.defaultPrevented) d3.event.stopPropagation();
+}
+
+// ZOOM NAMESPACED BEHAVIOR
+app.zoom = d3.behavior.zoom()
+            .translate([0,0])
+            .scale(1)
+            .scaleExtent([1,8])
+            .on("zoom", zoomed);
+
+// NAMESPACED MAP-MAKING FUNCTION
 app.MakeMap = function makeMap() {
       app.projection = d3.geo.mercator()
             .scale(app.width/6)
@@ -26,7 +85,8 @@ app.MakeMap = function makeMap() {
 
       app.svg = d3.select(".map-container").append("svg")
           .attr("width", app.width)
-          .attr("height", app.height);
+          .attr("height", app.height)
+          .on("click", stopped, true);
 
       app.svg.append("rect")
         .attr("class", "background")
@@ -34,8 +94,11 @@ app.MakeMap = function makeMap() {
         .attr("height", app.height)
         .on("click", reset);
 
-        app.g = app.svg.append("g")
-          .style("stroke-width", "1.5px");
+        app.g = app.svg.append("g");
+
+          app.svg
+            .call(app.zoom) // delete this line to disable free zooming
+            .call(app.zoom.event);
 
       d3.json("world-110m3.json", function(error, topology) {
         app.g.selectAll("path")
@@ -51,56 +114,10 @@ app.MakeMap = function makeMap() {
             .attr("class", "mesh")
             .attr("d", app.path);
         });
-
-        function clicked(d) {
-
-
-          if (app.active.node() === this) return reset();
-          app.active.classed("active", false);
-          app.active = d3.select(this).classed("active", true);
-
-        var bounds = app.path.bounds(d),
-          dx = bounds[1][0] - bounds[0][0],
-          dy = bounds[1][1] - bounds[0][1],
-          x = (bounds[0][0] + bounds[1][0]) / 2,
-          y = (bounds[0][1] + bounds[1][1]) / 2,
-          scale = .9 / Math.max(dx / app.width, dy / app.height),
-          translate = [app.width / 2 - scale * x, app.height / 2 - scale * y];
-
-        app.g.transition()
-          .duration(750)
-          .style("stroke-width", 1.5 / scale + "px")
-          .attr("transform", "translate(" + translate + ")scale(" + scale + ")");
-
-          d3.select('g').selectAll('circle').remove();
-
-          app.projectData(app.plottableData);
-        }
-
-        function reset() {
-          app.active.classed("active", false);
-          app.active = d3.select(null);
-
-          app.g.transition()
-          .duration(750)
-          .style("stroke-width", "1.5px")
-          .attr("transform", "");
-
-          d3.select('g').selectAll('circle').remove();
-
-          app.projectData(app.plottableData);
-        }
     };
 
 app.projectData = function ProjectData(data) {
   console.log(data);
-
-  // var tooltip = d3.select("body")
-  // .append("div")
-  // .attr("class", "tooltip")
-  // .style("position", "absolute")
-  // .style("z-index", "10")
-  // .style("visibility", "hidden");
 
   app.g.selectAll("circle")
     .data(app.plottableData)
@@ -132,16 +149,6 @@ app.projectData = function ProjectData(data) {
       app.tooltip.html('');
 
       app.tooltip.style("visibility", "hidden");
-
-      // var who = d3.select(this)[0][0].__data__.name;
-      // var what = d3.select(this)[0][0].__data__.message;
-      // var retweet = d3.select(this)[0][0].__data__.retweet;
-      // var img_url = d3.select(this)[0][0].__data__.img_url;
-
-      // tooltip.style("visibility", "visible")
-      // .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
-      //  who + "</h3>" + what +
-      //  "<br>Retweeted <strong>" + retweet.toString() + "</strong> times.");
     }
 
     function mouseOut(){
@@ -151,8 +158,6 @@ app.projectData = function ProjectData(data) {
       .attr("stroke-width", 2)
       .attr("stroke", "rgb(255, 255, 255)")
       .attr("fill", 'rgba(244, 9, 9, 0.9)');
-
-     
     }
 
     function click(){
