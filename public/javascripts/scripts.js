@@ -201,7 +201,7 @@ app.projectData = function ProjectData(data) {
           var safeMessage2 = what.replace(regex2, "");
 
           app.tooltip.html('');
-          
+
           if (link) {
              var safeMessage = what.replace(regex, "");
               app.tooltip.style("visibility", "visible")
@@ -223,42 +223,6 @@ app.projectData = function ProjectData(data) {
               retweet.toString() + "</strong> times.");
         }
       }
-
-
-      // var dataset = d3.select(this)[0][0].__data__;
-      // var who = dataset.name;
-      // var retweet = dataset.retweet;
-      // var img_url = dataset.img_url;
-
-      // var regex = /(http:..t.co.\w*)/g;
-      // var regex2 = /(https:..t.co.\w*)/g;
-      //   var what = dataset.message;
-      //   var link = what.match(regex);
-      //   var link2 = what.match(regex2);
-      //   var safeMessage = what.replace(regex, "");
-      //   var safeMessage2 = what.replace(regex2, "");
-
-      // app.tooltip.html('');
-      //   if (link) {
-      //      var safeMessage = what.replace(regex, "");
-      //     app.tooltip.style("visibility", "visible")
-      //     .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
-      //      who + "</h3>" + safeMessage + "<a href=\"" + link[0] + "\" target=\"_blank\">" +
-      //        link[0] + "</a><br>Retweeted <strong>" +
-      //       retweet.toString() + "</strong> times.");
-      // } else if(link2) {
-      //   var safeMessage2 = what.replace(regex2, "");
-      //     app.tooltip.style("visibility", "visible")
-      //     .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
-      //      who + "</h3>" + safeMessage2 + "<a href=\"" + link[0] + "\" target=\"_blank\">" +
-      //        link[0] + "</a><br>Retweeted <strong>" +
-      //       retweet.toString() + "</strong> times.");
-      // } else {
-      //     app.tooltip.style("visibility", "visible")
-      //     .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
-      //      who + "</h3>" + what + "<br>Retweeted <strong>" +
-      //       retweet.toString() + "</strong> times.");
-      // }
     }
 
   app.g.selectAll("circle")
@@ -314,6 +278,16 @@ app.retrieveData = function retrieveData() {
 
 $('document').ready(function(){
   console.log('ready!');
+
+  $("#toggle").click(function(){
+     $(".display-tweets").slideToggle( 'slow', function(){ 
+      if($("#toggle").html() === "[+]") {
+        $("#toggle").html("[-]");
+      } else if($("#toggle").html() === "[-]") {
+        $("#toggle").html("[+]");
+      }
+     });
+  });
 
   app.MakeMap();
         

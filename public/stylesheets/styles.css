@@ -30,6 +30,7 @@ header form {
 	/*background-color: rgba(93, 89, 250, 0.8);*/
 	/*background-color: white;*/
 	background-color: rgb(108, 114, 118);
+	display: none;
 	/*border-top: 3px solid white;
 	border-bottom: 3px solid white;*/
 }
@@ -124,14 +125,6 @@ li {
 	background-color: whitesmoke;
 }
 
-#logo {
-	height: 4em;
-	width: 3em;
-	margin: 5px;
-	position: relative;
-	display: inline-block;
-}
-
 /* ===============================================  */
 /* ============ Click to Zoom on Map =============  */
 /* ===============================================  */
@@ -160,3 +153,12 @@ svg {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+div#toggle {
+	background-color: rgb(108, 114, 118);
+	color: aliceblue;
+	font-size: normal;
+	margin: 0 auto;
+	text-align: center;
+}
+
