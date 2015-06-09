@@ -14,9 +14,16 @@ app.tooltip = d3.select("body")
   .attr("class", "tooltip")
   .style("position", "absolute")
   .style("z-index", "10")
-  .style("visibility", "hidden");
+  .style("visibility", "hidden")
+  .on("dblclick", hideMe);
 
 // ============ F U N C T I O N S =================//
+
+function hideMe(){
+   if(app.tooltip.style("visibility") === "visible") {
+    app.tooltip.style("visibility", "hidden");
+   }
+}
 
 function clicked(d) {
   if (app.active.node() === this) return reset();
@@ -32,7 +39,7 @@ function clicked(d) {
   translate = [app.width / 2 - app.scale * x, app.height / 2 - app.scale * y];
 
   app.svg.transition()
-  .duration(750)
+  .duration(1000)
   .call(app.zoom.translate(translate).scale(app.scale).event);
 
   d3.select('svg').selectAll('circle').remove();
@@ -44,7 +51,7 @@ function reset() {
   app.active = d3.select(null);
 
   app.svg.transition()
-  .duration(750)
+  .duration(1000)
   .call(app.zoom.translate([0,0]).scale(1).event)
 
   d3.select('svg').selectAll('circle').remove();
@@ -58,7 +65,20 @@ function zoomed() {
   app.g.selectAll("circle").style("stroke-width", 1.5 / d3.event.scale + "px");
   app.g.selectAll("circle").attr("r", 5 / d3.event.scale + "px");
   app.svg.style("stroke-width", 1.5 / d3.event.scale + "px");
+  
 }
+
+// function drawCities(){
+//   app.g.select(".place").remove();
+
+//   d3.json("world-50m-places.json", function(error, topology) {
+//         app.g.append("path")
+//         .datum(topojson.feature(topology, topology.objects['world-places']))
+//         .attr("d", app.path)
+//         .attr("class", "place")
+
+//       });
+// }
 
 // If the drag behavior prevents the default click,
 // also stop propagation so we don’t click-to-zoom.
@@ -100,9 +120,9 @@ app.MakeMap = function makeMap() {
             .call(app.zoom) // delete this line to disable free zooming
             .call(app.zoom.event);
 
-      d3.json("world-110m3.json", function(error, topology) {
+      d3.json("world-50m-places.json", function(error, topology) {
         app.g.selectAll("path")
-          .data(topojson.feature(topology, topology.objects["world-110m2"]).features)
+          .data(topojson.feature(topology, topology.objects["world50m"]).features)
           .enter()
           .append("path")
           .attr("d", app.path)
@@ -110,7 +130,7 @@ app.MakeMap = function makeMap() {
           .on("click", clicked);
 
           app.g.append("path")
-            .datum(topojson.mesh(topology, topology.objects["world-110m2"], function(a, b) { return a !== b; }))
+            .datum(topojson.mesh(topology, topology.objects["world50m"], function(a, b) { return a !== b; }))
             .attr("class", "mesh")
             .attr("d", app.path);
         });
@@ -161,19 +181,84 @@ app.projectData = function ProjectData(data) {
     }
 
     function click(){
-      var dataset = d3.select(this)[0][0].__data__;
-      console.log(dataset);
-      var who = dataset.name;
-      var what = dataset.message;
-      var retweet = dataset.retweet;
-      var img_url = dataset.img_url;
 
-      app.tooltip.html('');
+      if(app.tooltip.style("visibility") === "visible") {
+        app.tooltip.style("visibility", "hidden");
+      } else if(app.tooltip.style("visibility") === "hidden") {
+        app.tooltip.style("visibility", "visible");
 
-      app.tooltip.style("visibility", "visible")
-      .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
-       who + "</h3>" + what +
-       "<br>Retweeted <strong>" + retweet.toString() + "</strong> times.");
+          var dataset = d3.select(this)[0][0].__data__;
+          var who = dataset.name;
+          var retweet = dataset.retweet;
+          var img_url = dataset.img_url;
+
+          var regex = /(http:..t.co.\w*)/g;
+          var regex2 = /(https:..t.co.\w*)/g;
+          var what = dataset.message;
+          var link = what.match(regex);
+          var link2 = what.match(regex2);
+          var safeMessage = what.replace(regex, "");
+          var safeMessage2 = what.replace(regex2, "");
+
+          app.tooltip.html('');
+          
+          if (link) {
+             var safeMessage = what.replace(regex, "");
+              app.tooltip.style("visibility", "visible")
+              .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
+               who + "</h3>" + safeMessage + "<a href=\"" + link[0] + "\" target=\"_blank\">" +
+                 link[0] + "</a><br>Retweeted <strong>" +
+                retweet.toString() + "</strong> times.");
+        } else if(link2) {
+          var safeMessage2 = what.replace(regex2, "");
+            app.tooltip.style("visibility", "visible")
+            .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
+             who + "</h3>" + safeMessage2 + "<a href=\"" + link[0] + "\" target=\"_blank\">" +
+               link[0] + "</a><br>Retweeted <strong>" +
+              retweet.toString() + "</strong> times.");
+        } else {
+            app.tooltip.style("visibility", "visible")
+            .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
+             who + "</h3>" + what + "<br>Retweeted <strong>" +
+              retweet.toString() + "</strong> times.");
+        }
+      }
+
+
+      // var dataset = d3.select(this)[0][0].__data__;
+      // var who = dataset.name;
+      // var retweet = dataset.retweet;
+      // var img_url = dataset.img_url;
+
+      // var regex = /(http:..t.co.\w*)/g;
+      // var regex2 = /(https:..t.co.\w*)/g;
+      //   var what = dataset.message;
+      //   var link = what.match(regex);
+      //   var link2 = what.match(regex2);
+      //   var safeMessage = what.replace(regex, "");
+      //   var safeMessage2 = what.replace(regex2, "");
+
+      // app.tooltip.html('');
+      //   if (link) {
+      //      var safeMessage = what.replace(regex, "");
+      //     app.tooltip.style("visibility", "visible")
+      //     .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
+      //      who + "</h3>" + safeMessage + "<a href=\"" + link[0] + "\" target=\"_blank\">" +
+      //        link[0] + "</a><br>Retweeted <strong>" +
+      //       retweet.toString() + "</strong> times.");
+      // } else if(link2) {
+      //   var safeMessage2 = what.replace(regex2, "");
+      //     app.tooltip.style("visibility", "visible")
+      //     .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
+      //      who + "</h3>" + safeMessage2 + "<a href=\"" + link[0] + "\" target=\"_blank\">" +
+      //        link[0] + "</a><br>Retweeted <strong>" +
+      //       retweet.toString() + "</strong> times.");
+      // } else {
+      //     app.tooltip.style("visibility", "visible")
+      //     .html("<img class=\"tooltip-photo\"src=\"" + img_url + "\"><h3>" +
+      //      who + "</h3>" + what + "<br>Retweeted <strong>" +
+      //       retweet.toString() + "</strong> times.");
+      // }
     }
 
   app.g.selectAll("circle")
