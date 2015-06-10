@@ -39,7 +39,7 @@ header form {
 	overflow: auto;
 	width: 100%;
 	margin: 2em auto;
-	background-color: rgb(0, 42, 79);
+	background-color: rgba(86, 128, 205, 0.78);
 }
 
 .tooltip {
@@ -130,7 +130,7 @@ li {
 /* ===============================================  */
 
 svg {
-	stroke: rgba(55, 149, 240, 0.5);
+	stroke: rgba(0, 2, 3, 0.5);
 }
 
 .background {
@@ -139,12 +139,12 @@ svg {
 }
 
 .feature {
-  fill: rgb(228, 232, 42);
+  fill: rgb(255, 255, 255);
   cursor: pointer;
 }
 
 .feature.active {
-  fill: rgb(48, 145, 255);
+  fill: rgb(195, 202, 202);
 }
 
 .mesh {
